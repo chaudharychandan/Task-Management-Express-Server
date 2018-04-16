@@ -49,22 +49,28 @@ module.exports = {
     const { _id } = body;
     try {
       if (_id) {
-        const list = await List.update({
+        const list = await List.findByIdAndUpdate({
           _id: id
         }, {
           $pull: {
             cards: { _id }
           }
+        }, {
+          new: true
         });
+
         res.send(list);
       } else {
-        const list = await List.update({
+        const list = await List.findByIdAndUpdate({
           _id: id
         }, {
           $push: {
             cards: body
           }
+        }, {
+          new: true
         });
+        
         res.send(list);
       }
     } catch (error) {

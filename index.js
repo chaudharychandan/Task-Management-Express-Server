@@ -4,11 +4,13 @@ const mongoose = require('mongoose');
 
 const config = require('./config');
 const routes = require('./routes');
+const cors = require('./middlewares/cors');
 
 mongoose.connect(config.mongoURI);
 
 const app = express();
 app.use(bodyParser.json());
+cors(app);
 
 routes(app);
 
