@@ -7,7 +7,7 @@ const userSchema = new Schema({
     required: true
   },
   photos: [{ value: String }],
-  googleId: String,
+  googleId: { type: String, index: { unique: true } },
   createdAt: { type: Date, default: Date.now },
 });
 

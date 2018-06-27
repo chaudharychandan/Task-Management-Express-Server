@@ -2,6 +2,10 @@ const passport = require('passport');
 
 module.exports = {
   google: {
+    saveRequester(req, res, next) {
+      req.session.redirect = req.headers.referer;
+      next();
+    },
     authenticate() {
       return passport.authenticate('google', {
         scope: ['profile']
@@ -10,8 +14,8 @@ module.exports = {
     authenticateWithCode() {
       return passport.authenticate('google');
     },
-    callback() {
-
+    callback(req, res) {
+      res.redirect(req.session.redirect);
     }
   }
 }

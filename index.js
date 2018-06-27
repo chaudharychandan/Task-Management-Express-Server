@@ -2,7 +2,11 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const passport = require('passport');
+const cookieSession = require('cookie-session');
+
 require('./middlewares/passport');
+const { session } = require('./config/keys');
 
 const config = require('./config');
 const routes = require('./routes');
@@ -12,6 +16,13 @@ mongoose.connect(config.mongoURI);
 const app = express();
 app.use(bodyParser.json());
 app.use(cors());
+app.use(cookieSession({
+  maxAge: 24 * 60 * 60 * 1000,
+  keys: [session.cookieKey]
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 routes(app);
 
