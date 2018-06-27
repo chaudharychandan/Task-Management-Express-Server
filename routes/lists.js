@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const ListController =  require('../controllers/list');
+const { ListController } =  require('../controllers');
 
 router.get('/:id', ListController.get);
 router.get('/', ListController.index);

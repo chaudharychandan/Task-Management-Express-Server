@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const List = require('../models/List');
+const { List } = require('../models');
 
 module.exports = {
   async index(req, res, next) {
