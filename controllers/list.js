@@ -70,7 +70,7 @@ module.exports = {
         }, {
           new: true
         });
-        
+
         res.send(list);
       }
     } catch (error) {
