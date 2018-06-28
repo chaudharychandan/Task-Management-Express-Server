@@ -16,6 +16,10 @@ module.exports = {
     },
     callback(req, res) {
       res.redirect(req.session.redirect);
+    },
+    logout(req, res) {
+      req.logout();
+      res.redirect(req.session.redirect);
     }
   }
 }
