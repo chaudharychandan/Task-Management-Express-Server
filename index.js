@@ -15,8 +15,14 @@ mongoose.connect(config.mongoURI);
 
 const app = express();
 app.use(bodyParser.json());
-app.use(cors());
+app.use(cors({
+  credentials: true,
+  origin: function(origin, callback) {
+    callback(null, true);
+  }
+}));
 app.use(cookieSession({
+  name: 'session',
   maxAge: 24 * 60 * 60 * 1000,
   keys: [session.cookieKey]
 }));
