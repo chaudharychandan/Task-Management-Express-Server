@@ -14,7 +14,8 @@ module.exports = {
     authenticateWithCode() {
       return passport.authenticate('google');
     },
-    callback(req, res) {
+    async callback(req, res) {
+      await req.session.save();
       res.redirect(req.session.redirect);
     },
     logout(req, res) {
@@ -25,7 +26,7 @@ module.exports = {
       if(req.isAuthenticated()) {
         return next();
       } else {
-        res.sendStatus(401);
+        res.sendStatus(403);
       }
     }
   }

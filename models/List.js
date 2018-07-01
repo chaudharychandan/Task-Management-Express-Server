@@ -13,6 +13,12 @@ const listSchema = new Schema({
     ref: 'Board',
     required: true
   },
+  userId: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+    index: true
+  },
   createdAt: { type: Date, default: Date.now },
   cards: [cardSchema]
 });

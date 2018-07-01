@@ -1,26 +1,29 @@
 const mongoose = require('mongoose');
 const { Board } = require('../models');
+const ObjectId = mongoose.Types.ObjectId;
 
 module.exports = {
   async index(req, res, next) {
     try {
-      const boards = await Board.find();
+      const { user: { id } } = req;
+      const boards = await Board.find({ userId: ObjectId(id) });
       res.send(boards);
     } catch (error) {
       next(error);
     }
   },
   async get(req, res, next) {
-    const { params: { id } } = req;
+    const { params: { id }, user } = req;
     try {
-      const board = await Board.findById(id);
+      const board = await Board.findOne({ _id: id, userId: ObjectId(user.id) });
       sendResponse(res, board);
     } catch (error) {
       next(error);
     }
   },
   async create(req, res, next) {
-    const { body } = req;
+    const { body, user: { id } } = req;
+    Object.assign(body, { userId: id });
     try {
       let board = new Board(body);
       board = await board.save();
@@ -30,9 +33,9 @@ module.exports = {
     }
   },
   async delete(req, res, next) {
-    const { params: { id } } = req;
+    const { params: { id }, user } = req;
     try {
-      const board = await Board.findById(id);
+      const board = await Board.findOne({ _id: id, userId: ObjectId(user.id) });
       if (!board) {
         return res.sendStatus(404);
       }

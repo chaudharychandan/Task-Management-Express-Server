@@ -1,10 +1,12 @@
 const mongoose = require('mongoose');
 const { List } = require('../models');
+const ObjectId = mongoose.Types.ObjectId;
 
 module.exports = {
   async index(req, res, next) {
-    const { query: { boardId } } = req;
+    const { query: { boardId }, user: { id } } = req;
     let query = boardId ? { boardId } : {};
+    Object.assign(query, { userId: ObjectId(id) })
     try {
       const lists = await List.find(query);
       res.send(lists);
@@ -13,16 +15,17 @@ module.exports = {
     }
   },
   async get(req, res, next) {
-    const { params: { id } } = req;
+    const { params: { id }, user } = req;
     try {
-      const list = await List.findById(id);
+      const list = await List.findOne({ _id: id, userId: ObjectId(user.id) });
       sendResponse(res, list);
     } catch(error) {
       next(error);
     }
   },
   async create(req, res, next) {
-    const { body } = req;
+    const { body, user: { id } } = req;
+    Object.assign(body, { userId: id });
     try {
       let list = new List(body);
       list = await list.save();
@@ -32,9 +35,9 @@ module.exports = {
     }
   },
   async delete(req, res, next) {
-    const { params: { id } } = req;
+    const { params: { id }, user } = req;
     try {
-      const list = await List.findById(id);
+      const list = await List.findOne({ _id: id, userId: ObjectId(user.id) });
       if (!list) {
         return res.sendStatus(404);
       }
@@ -45,12 +48,13 @@ module.exports = {
     }
   },
   async update(req, res, next) {
-    const { params: { id }, body } = req;
+    const { params: { id }, body, user } = req;
     const { _id } = body;
     try {
       if (_id) {
-        const list = await List.findByIdAndUpdate({
-          _id: id
+        const list = await List.findOneAndUpdate({
+          _id: id,
+          userId: ObjectId(user.id)
         }, {
           $pull: {
             cards: { _id }
@@ -61,8 +65,9 @@ module.exports = {
 
         res.send(list);
       } else {
-        const list = await List.findByIdAndUpdate({
-          _id: id
+        const list = await List.findOneAndUpdate({
+          _id: id,
+          userId: ObjectId(user.id)
         }, {
           $push: {
             cards: body

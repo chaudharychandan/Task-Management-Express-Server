@@ -10,7 +10,13 @@ const boardSchema = new Schema({
   lists: [{
     type: Schema.Types.ObjectId,
     ref: 'List'
-  }]
+  }],
+  userId: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+    index: true
+  }
 });
 
 boardSchema.post('remove', async (doc) => {
