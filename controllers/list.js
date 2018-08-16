@@ -49,35 +49,49 @@ module.exports = {
   },
   async update(req, res, next) {
     const { params: { id }, body, user } = req;
-    const { _id } = body;
+    const { _id, action } = body;
     try {
-      if (_id) {
-        const list = await List.findOneAndUpdate({
-          _id: id,
-          userId: ObjectId(user.id)
-        }, {
-          $pull: {
-            cards: { _id }
-          }
-        }, {
-          new: true
-        });
-
-        res.send(list);
-      } else {
-        const list = await List.findOneAndUpdate({
-          _id: id,
-          userId: ObjectId(user.id)
-        }, {
-          $push: {
-            cards: body
-          }
-        }, {
-          new: true
-        });
-
-        res.send(list);
+      let list;
+      switch(action) {
+        case 'ADD':
+          list = await List.findOneAndUpdate({
+            _id: id,
+            userId: ObjectId(user.id)
+          }, {
+            $push: {
+              cards: body
+            }
+          }, {
+            new: true
+          });
+          break;
+        case 'DELETE':
+          list = await List.findOneAndUpdate({
+            _id: id,
+            userId: ObjectId(user.id)
+          }, {
+            $pull: {
+              cards: { _id }
+            }
+          }, {
+            new: true
+          });
+          break;
+        case 'UPDATE':
+          list = await List.findOneAndUpdate({
+            _id: id,
+            userId: ObjectId(user.id),
+            "cards._id": ObjectId(_id)
+          }, {
+            $set: {
+              "cards.$": body
+            }
+          }, {
+            new: true
+          });
+          break;
       }
+      res.send(list);
     } catch (error) {
       next(error);
     }

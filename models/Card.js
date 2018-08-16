@@ -6,6 +6,10 @@ const cardSchema = new Schema({
     type: String,
     required: true
   },
+  isComplete: {
+    type: Boolean,
+    default: false
+  },
   createdAt: { type: Date, default: Date.now },
 });
 
